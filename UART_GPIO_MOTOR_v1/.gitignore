@@ -1,0 +1,26 @@
+# Build output
+Debug/
+Release/
+
+# CubeIDE launch configurations
+*.launch
+
+# Temporary files
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+
+# Eclipse/CubeIDE metadata
+.metadata/
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Backup files
+*~
+
