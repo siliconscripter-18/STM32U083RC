@@ -1,6 +1,6 @@
-#include "uart.h"
 #include "gpio.h"
 #include "motor.h"
+#include "uart.h"
 
 char c;
 
@@ -45,20 +45,17 @@ int main(void)
         else if(c == 'F' || c == 'f'){
 
         	Motor_Forward();
-        	UART_SendString("MOTOR FORWARD\r\n");
+
         }
 
         else if(c == 'R' || c == 'r'){
 
             Motor_Reverse();
-            UART_SendString("MOTOR REVERSE\r\n");
         }
 
         else if(c== 'X' || c == 'x'){
 
         	Motor_Stop();
-        	UART_SendString("MOTOR STOP\r\n");
-
         }
 
         else if(c == 'h' || c == 'H'){

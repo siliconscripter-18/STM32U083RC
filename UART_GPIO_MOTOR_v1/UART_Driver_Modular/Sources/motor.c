@@ -1,38 +1,44 @@
-#include"gpio.h"
+#include "gpio.h"
+#include "registers.h"
+#include "uart.h"
 
-#define RCC_IOPENR  (*(volatile unsigned int*)0x4002104C)
-#define GPIOA_MODER (*(volatile unsigned int*)0x50000000)
-#define GPIOA_ODR   (*(volatile unsigned int*)0x50000014)
 
 
 void Motor_Init(void){
 
-		RCC_IOPENR|=(1<<0);
+		RCC_IOPENR|=(1<<GPIOAEN); // enable clock for GPIOA
 
-		GPIOA_MODER&=~(3<<16);
-		GPIOA_MODER|=(1<<16); //PA8 o/p
+		GPIOA_MODER&=~(3<<(PA8*2));
+		GPIOA_MODER|=(1<<(PA8*2)); //set PA8 as o/p for IN1
 
 
-		GPIOA_MODER&=~(3<<18);
-		GPIOA_MODER|=(1<<18); //PA9 o/p
+		GPIOA_MODER&=~(3<<(PA9*2));
+		GPIOA_MODER|=(1<<(PA9*2)); //set PA9 as o/p for IN2
 }
 
 void Motor_Forward(void){
 
-		GPIOA_ODR|=(1<<8);  // PA8=1 and
-		GPIOA_ODR&=~(1<<9); // PA9=0 makes motor spin forward
+		GPIOA_ODR|=(1<<PA8);  // IN1 = HIGH,
+		GPIOA_ODR&=~(1<<PA9); // IN2 = LOW (Motor Forward)
+
+		UART_SendString("MOTOR FORWARD\r\n");
 }
 
 void Motor_Reverse(void){
 
-		GPIOA_ODR&=~(1<<8); // PA8=0 and
-		GPIOA_ODR|=(1<<9); //  PA9=1 makes motor spin Reverse
+		GPIOA_ODR&=~(1<<PA8); //IN1 = LOW,
+		GPIOA_ODR|=(1<<PA9); //IN2 = HIGH (Motor Reverse)
+
+		UART_SendString("MOTOR REVERSE\r\n");
+
 
 }
 
 void Motor_Stop(void){
 
-	GPIOA_ODR&=~(1<<8); // PA8=0 and
-	GPIOA_ODR&=~(1<<9); // PA9=0 both same makes motor stop immediately
+	GPIOA_ODR&=~(1<<PA8);
+	GPIOA_ODR&=~(1<<PA9); // IN1 = LOW, IN2 = LOW (Motor Stop)
+
+	UART_SendString("MOTOR STOP\r\n");
 
 }

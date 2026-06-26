@@ -6,7 +6,7 @@ This project demonstrates a **modular register-level firmware implementation** o
 
 The firmware provides a UART-based command-line interface to control the on-board LED, read the user button status, and control a DC motor through an **L298N motor driver**.
 
-All peripheral configuration is implemented using **direct register programming** without the STM32 HAL library.
+All peripheral configuration is implemented using **direct register programming** without using the STM32 HAL library.
 
 ---
 
@@ -24,6 +24,7 @@ All peripheral configuration is implemented using **direct register programming*
 
 * Register-level programming
 * Modular driver architecture
+* Centralized register definitions
 * UART Transmit
 * UART Receive
 * UART Command Interface
@@ -102,7 +103,7 @@ All peripheral configuration is implemented using **direct register programming*
 | +12V    | 12V   |
 | GND     | GND   |
 
-> **Important:** The STM32 and the L298N must share a common ground.
+> **Important:** The STM32 NUCLEO-U083RC and the L298N must share a common ground.
 
 ---
 
@@ -116,6 +117,7 @@ UART_GPIO_MOTOR_v1
 └── UART_Driver_Modular/
     ├── Sources/
     │   ├── main.c
+    │   ├── registers.h
     │   ├── uart.c / uart.h
     │   ├── gpio.c / gpio.h
     │   └── motor.c / motor.h
@@ -136,8 +138,9 @@ UART_GPIO_MOTOR_v1
 ## Notes
 
 * Register-level firmware implementation
-* USART2 used for UART communication through the ST-LINK Virtual COM Port
+* USART2 is used for UART communication through the ST-LINK Virtual COM Port
 * Modular driver organization (`uart`, `gpio`, `motor`)
+* Centralized register definitions in `registers.h`
 * No STM32 HAL library used
 * Tested on the STM32 NUCLEO-U083RC development board
 
@@ -145,8 +148,7 @@ UART_GPIO_MOTOR_v1
 
 ## Future Improvements
 
-* Centralize register definitions into a common header
-* Improve code reuse and modularity
+* UART string reception (`UART_ReadString()`)
 * Interrupt-driven UART reception
 * PWM-based motor speed control
 * SSD1306 OLED driver (I2C)
