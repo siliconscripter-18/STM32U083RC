@@ -1,16 +1,37 @@
 #ifndef SOURCES_GPIO_H_
 #define SOURCES_GPIO_H_
 
-void LED_Init(void);
+/* GPIO Initialization */
+void GPIO_Init(void);
 
-void LED_On(void);
+/* On-board LED (LD4) */
+void LD4_On(void);
+void LD4_Off(void);
+void LD4_Status(void);
 
-void LED_Off(void);
+/* External LEDs */
+void LED1_On(void);
+void LED1_Off(void);
 
-void LED_Status(void);
+void LED2_On(void);
+void LED2_Off(void);
 
-void Button_Init(void);
+void LED3_On(void);
+void LED3_Off(void);
 
-void User_Button(void);
+void LED4_On(void);
+void LED4_Off(void);
 
-#endif
+/* External LED Group */
+void AllLED_On(void);
+void AllLED_Off(void);
+
+/* Buzzer */
+void Buzzer_On(void);
+void Buzzer_Off(void);
+
+/* Buttons */
+void UserButton_Read(void);      // PC13 (On-board User Button)
+void ExternalButton_Read(void);  // PA1 (External Button)
+
+#endif /* SOURCES_GPIO_H_ */

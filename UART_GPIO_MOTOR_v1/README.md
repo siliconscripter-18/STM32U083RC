@@ -4,154 +4,219 @@
 
 This project demonstrates a **modular register-level firmware implementation** on the **STM32 NUCLEO-U083RC** development board.
 
-The firmware provides a UART-based command-line interface to control the on-board LED, read the user button status, and control a DC motor through an **L298N motor driver**.
+The firmware provides a **UART-based Command-Line Interface (CLI)** for controlling LEDs, reading button status, controlling a buzzer, and operating a DC motor using an **L298N Motor Driver**.
 
-All peripheral configuration is implemented using **direct register programming** without using the STM32 HAL library.
+All peripherals are configured using **direct register programming** without using the STM32 HAL library.
+
+> **This project serves as the foundation for future register-level STM32 peripheral drivers such as I²C, Timers, PWM, ADC, and more.**
 
 ---
 
 ## Hardware Used
 
-* STM32 NUCLEO-U083RC
-* L298N Motor Driver
-* DC Motor
-* 12V DC Adapter
-* USB Type-C (Programming & UART Terminal)
+- STM32 NUCLEO-U083RC
+- L298N Motor Driver
+- DC Motor
+- Active Buzzer Module
+- 4 × External LEDs
+- External Push Button
+- Breadboard
+- Jumper Wires
+- 12V DC Adapter
+- USB Type-C Cable
 
 ---
 
 ## Features
 
-* Register-level programming
-* Modular driver architecture
-* Centralized register definitions
-* UART Transmit
-* UART Receive
-* UART Command Interface
-* LED ON/OFF Control
-* LED Status
-* User Button Status
-* Motor Forward
-* Motor Reverse
-* Motor Stop
+- Register-Level Programming
+- Modular Driver Architecture
+- Centralized Register Definitions
+- UART Transmit
+- UART Receive
+- UART String Command Interface
+- Case-Insensitive Command Parser
+- On-board LD4 Control
+- External LED Control
+- LED Status
+- User Button Status
+- External Button Status
+- Buzzer Control
+- Motor Forward
+- Motor Reverse
+- Motor Stop
+- Atomic GPIO Control using `GPIOx_BSRR`
 
 ---
 
-## Project Images
+# Project Images
 
-### Hardware Setup
+## Hardware Setup
 
-<img src="Images/hardware_setup.jpg" width="500">
+<img src="Images/hardware_setup.jpg" width="700">
 
 ---
 
-### UART Help Menu
+## UART Help Menu
 
 <img src="Images/help_menu.png" width="700">
 
 ---
 
-### LED and Button Demonstration
+## UART Command Interface
 
-<img src="Images/led_button_demo.png" width="700">
+<img src="Images/command_interface.png" width="700">
 
 ---
 
-### Motor Control Demonstration
+## Motor Control Demonstration
 
 <img src="Images/motor_control.png" width="700">
 
 ---
 
-### STM32CubeIDE Project
+## STM32CubeIDE Project Structure
 
 <img src="Images/cubeide_project.png" width="900">
 
 ---
 
-## UART Commands
+# UART Commands
 
-| Command | Function          |
-| ------- | ----------------- |
-| H       | Display Help Menu |
-| L       | LED ON            |
-| O       | LED OFF           |
-| S       | LED Status        |
-| B       | Button Status     |
-| F       | Motor Forward     |
-| R       | Motor Reverse     |
-| X       | Motor Stop        |
+| Command | Description |
+|----------|-------------|
+| `LD4ON` | Turn ON On-board LD4 |
+| `LD4OFF` | Turn OFF On-board LD4 |
+| `LD4STATUS` | Display LD4 Status |
+| `LEDON n` | Turn ON External LED (1–4) |
+| `LEDOFF n` | Turn OFF External LED (1–4) |
+| `ALLLEDON` | Turn ON All External LEDs |
+| `ALLLEDOFF` | Turn OFF All External LEDs |
+| `BUZON` | Turn ON Buzzer |
+| `BUZOFF` | Turn OFF Buzzer |
+| `USERBTN` | Read On-board User Button |
+| `EXTBTN` | Read External Button |
+| `MOTORFWD` | Rotate Motor Forward |
+| `MOTORREV` | Rotate Motor Reverse |
+| `MOTORSTOP` | Stop Motor |
+| `HELP` | Display Help Menu |
 
-> Commands are **case-insensitive**.
-
----
-
-## Pin Connections
-
-### STM32 → L298N
-
-| STM32 Pin    | Function      | L298N Pin |
-| ------------ | ------------- | --------- |
-| CN9 D7 (PA8) | Motor Control | IN1       |
-| CN9 D8 (PA9) | Motor Control | IN2       |
-| GND          | Common Ground | GND       |
-
-### External Power Supply
-
-| Adapter | L298N |
-| ------- | ----- |
-| +12V    | 12V   |
-| GND     | GND   |
-
-> **Important:** The STM32 NUCLEO-U083RC and the L298N must share a common ground.
+> **Commands are case-insensitive.**
 
 ---
 
-## Project Structure
+# Hardware Connections
+
+## LEDs
+
+| STM32 Pin | Device |
+|-----------|--------|
+| PA5 | On-board LD4 |
+| PA7 | External LED1 |
+| PA8 | External LED2 |
+| PA9 | External LED3 |
+| PA10 | External LED4 |
+
+---
+
+## Buttons
+
+| STM32 Pin | Device |
+|-----------|--------|
+| PC13 | On-board User Button |
+| PA1 | External Push Button |
+
+---
+
+## Buzzer
+
+| STM32 Pin | Device |
+|-----------|--------|
+| PA15 | Active Buzzer Module |
+
+---
+
+## Motor Driver (L298N)
+
+| STM32 Pin | L298N Pin | Function |
+|-----------|-----------|----------|
+| PA4 | IN1 | Motor Direction Control |
+| PA6 | IN2 | Motor Direction Control |
+| GND | GND | Common Ground |
+
+---
+
+## Power Connections
+
+| Supply | Connected To |
+|--------|---------------|
+| USB Type-C | STM32 NUCLEO-U083RC |
+| +12V Adapter | L298N 12V Input |
+| Adapter GND | L298N GND |
+| STM32 GND | L298N GND |
+
+> **Important:** The STM32 board and the L298N motor driver must share a common ground.
+
+---
+
+# Project Structure
 
 ```text
 UART_GPIO_MOTOR_v1
 ├── Images/
+│   ├── hardware_setup.jpg
+│   ├── help_menu.png
+│   ├── command_interface.png
+│   ├── motor_control.png
+│   └── cubeide_project.png
+│
 ├── README.md
 ├── .gitignore
+│
 └── UART_Driver_Modular/
     ├── Sources/
     │   ├── main.c
     │   ├── registers.h
-    │   ├── uart.c / uart.h
-    │   ├── gpio.c / gpio.h
-    │   └── motor.c / motor.h
+    │   ├── uart.c
+    │   ├── uart.h
+    │   ├── gpio.c
+    │   ├── gpio.h
+    │   ├── motor.c
+    │   └── motor.h
+    │
     └── Startup/
 ```
 
 ---
 
-## Software Used
+# Software Used
 
-* STM32CubeIDE
-* Tera Term
-* Git
-* GitHub
-
----
-
-## Notes
-
-* Register-level firmware implementation
-* USART2 is used for UART communication through the ST-LINK Virtual COM Port
-* Modular driver organization (`uart`, `gpio`, `motor`)
-* Centralized register definitions in `registers.h`
-* No STM32 HAL library used
-* Tested on the STM32 NUCLEO-U083RC development board
+- STM32CubeIDE
+- Tera Term
+- Git
+- GitHub
 
 ---
 
-## Future Improvements
+# Notes
 
-* UART string reception (`UART_ReadString()`)
-* Interrupt-driven UART reception
-* PWM-based motor speed control
-* SSD1306 OLED driver (I2C)
-* I2C EEPROM support
-* DHT22 sensor interface
-* Combine peripherals into a complete embedded application
+- Implemented entirely using direct register programming.
+- No STM32 HAL library used.
+- USART2 is used through the ST-LINK Virtual COM Port.
+- Modular source organization (`uart`, `gpio`, `motor`).
+- GPIO outputs use the **GPIOx_BSRR** register for atomic Set/Reset operations.
+- LED status is read using **GPIOx_ODR**.
+- Tested on the STM32 NUCLEO-U083RC development board.
+
+---
+
+# Future Improvements
+
+- Button-controlled peripheral operation
+- Interrupt-driven UART reception
+- PWM-based motor speed control
+- Timer Driver
+- SSD1306 OLED Driver (I²C)
+- I²C EEPROM Driver
+- DHT22 Sensor Driver
+- Integrate multiple peripherals into a complete embedded application

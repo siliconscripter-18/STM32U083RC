@@ -1,44 +1,48 @@
-#include "gpio.h"
+/*
+ * motor.c
+ * Motor Driver Implementation
+ */
+
+#include "motor.h"
 #include "registers.h"
 #include "uart.h"
 
+/* Motor Initialization */
+void Motor_Init(void)
+{
+		/* Enable clock for GPIOA */
+		RCC_IOPENR |= (1<<GPIOAEN);
 
+		/* Configure PA4 as output (Motor IN1) */
+		GPIOA_MODER &= ~(3<<(PA4*2));
+		GPIOA_MODER |=  (1<<(PA4*2));
 
-void Motor_Init(void){
-
-		RCC_IOPENR|=(1<<GPIOAEN); // enable clock for GPIOA
-
-		GPIOA_MODER&=~(3<<(PA8*2));
-		GPIOA_MODER|=(1<<(PA8*2)); //set PA8 as o/p for IN1
-
-
-		GPIOA_MODER&=~(3<<(PA9*2));
-		GPIOA_MODER|=(1<<(PA9*2)); //set PA9 as o/p for IN2
+		/* Configure PA6 as output (Motor IN2) */
+		GPIOA_MODER &= ~(3<<(PA6*2));
+		GPIOA_MODER |=  (1<<(PA6*2));
 }
 
-void Motor_Forward(void){
-
-		GPIOA_ODR|=(1<<PA8);  // IN1 = HIGH,
-		GPIOA_ODR&=~(1<<PA9); // IN2 = LOW (Motor Forward)
+/* Motor Control */
+void Motor_Forward(void)
+{
+		/* Set IN1 HIGH and IN2 LOW (Motor Forward) */
+		GPIOA_BSRR = (1 <<PA4) | (1 << (PA6 + 16));
 
 		UART_SendString("MOTOR FORWARD\r\n");
 }
 
-void Motor_Reverse(void){
-
-		GPIOA_ODR&=~(1<<PA8); //IN1 = LOW,
-		GPIOA_ODR|=(1<<PA9); //IN2 = HIGH (Motor Reverse)
+void Motor_Reverse(void)
+{
+		/* Set IN1 LOW and IN2 HIGH (Motor Reverse) */
+		GPIOA_BSRR = (1 <<PA6) | (1 << (PA4 + 16));
 
 		UART_SendString("MOTOR REVERSE\r\n");
-
-
 }
 
-void Motor_Stop(void){
+void Motor_Stop(void)
+{
+		/* Set IN1 LOW and IN2 LOW (Motor Stop) */
+		GPIOA_BSRR = (1 << (PA4 + 16)) | (1 << (PA6 + 16));
 
-	GPIOA_ODR&=~(1<<PA8);
-	GPIOA_ODR&=~(1<<PA9); // IN1 = LOW, IN2 = LOW (Motor Stop)
-
-	UART_SendString("MOTOR STOP\r\n");
-
+		UART_SendString("MOTOR STOP\r\n");
 }

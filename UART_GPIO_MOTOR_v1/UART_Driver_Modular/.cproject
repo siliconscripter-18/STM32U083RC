@@ -14,7 +14,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="com.st.stm32cube.ide.cmake.cmakeTarget">
-				<src>C:\Users\balaj\OneDrive\Documents\STM32\UART_Driver_Modular</src>
+				<src>C:\Users\balaj\OneDrive\Documents\STM32U083RC\UART_GPIO_MOTOR_v1\UART_Driver_Modular</src>
 				<build>Debug</build>
 				<generator>Ninja</generator>
 				<cmake_build_type>Debug</cmake_build_type>
