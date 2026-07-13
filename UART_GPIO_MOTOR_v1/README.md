@@ -171,7 +171,6 @@ UART_GPIO_MOTOR_v1
 │   └── cubeide_project.png
 │
 ├── README.md
-├── .gitignore
 │
 └── UART_Driver_Modular/
     ├── Sources/
