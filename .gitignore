@@ -13,6 +13,7 @@ Release/
 *.hex
 *.map
 *.list
+*.su
 
 # Eclipse/CubeIDE metadata
 .metadata/
@@ -20,7 +21,7 @@ Release/
 # OS files
 Thumbs.db
 Desktop.ini
+.DS_Store
 
 # Backup files
 *~
-
