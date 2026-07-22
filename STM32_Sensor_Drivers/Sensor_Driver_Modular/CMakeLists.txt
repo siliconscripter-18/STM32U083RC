@@ -56,6 +56,7 @@ set (PROJECT_SOURCES
 	Sources/timer3.c  
 	Sources/uart.c
 	Sources/button.c
+	Sources/hc-sr04.c
 	)
 
 set (PROJECT_DEFINES

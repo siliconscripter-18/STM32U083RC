@@ -1,9 +1,6 @@
 #include "timer3.h"
 #include "registers.h"
 
-/* Timer counter value used by delay_us() */
-static volatile uint16_t startCnt;
-
 /* Configure TIM3 to generate a 1 µs timer tick. */
 void TIM3_Init(void)
 {
@@ -32,7 +29,8 @@ void TIM3_Init(void)
 /* Generate a blocking delay in microseconds. */
 void delay_us(uint16_t us)
 {
-    startCnt = TIM3_CNT;
+
+	uint16_t  startCnt = TIM3_CNT;
 
     while ((uint16_t)(TIM3_CNT - startCnt) < us);
 }
