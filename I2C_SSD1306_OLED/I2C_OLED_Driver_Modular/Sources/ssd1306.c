@@ -66,7 +66,7 @@ void SSD1306_DrawChar(char c) {
 
     if(c < 32 || c > 126)
     {
-    	c = ' '; // if below 32 and above 126 char not matched with font table so show space instead of garbage
+    	c = ' '; // Characters outside the font table are displayed as a space
     }
 
     const uint8_t *bitmap = font5x7[c - 32];

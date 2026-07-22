@@ -2,21 +2,20 @@
 #include "ssd1306.h"
 #include "font5x7.h"
 
-int main(void) {
-    // Initialize I2C1 hardware
+int main(void)
+{
     I2C1_Init();
 
-    // Initialize OLED
-    SSD1306_Init();
-    SSD1306_Clear();
+    if (I2C1_CheckDevice(SSD1306_ADDR))
+    {
+        SSD1306_Init();
+        SSD1306_Clear();
 
-    // Position cursor at column 0, page 0
-    SSD1306_SetCursor(0, 0);
+        SSD1306_SetCursor(0, 0);
+        SSD1306_DrawString("STM32 ROCKS 123!");
+    }
 
-    // Draw any string you like
-    SSD1306_DrawString("STM32 ROCKS 123!");
-
-    while(1) {
-        // main loop
+    while (1)
+    {
     }
 }
