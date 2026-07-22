@@ -2,17 +2,17 @@
 
 Bare-metal embedded systems projects developed using the **STM32 NUCLEO-U083RC** development board.
 
-The projects focus on direct peripheral register programming without using the STM32 HAL library.
+All projects are implemented using **direct peripheral register programming** without the STM32 HAL library. Each project is organized using a modular driver architecture to demonstrate reusable embedded firmware design.
 
 ---
 
-## Projects
+# Projects
 
-### UART GPIO Motor Driver
+## UART GPIO Motor Driver
 
 Register-level UART, GPIO, button, and DC motor control implementation.
 
-Features include:
+### Features
 
 - USART2 transmit and receive
 - UART command processing
@@ -21,17 +21,17 @@ Features include:
 - L298N DC motor forward, reverse, and stop control
 - Modular driver structure
 
-Project folder:
+**Project folder**
 
 `UART_GPIO_MOTOR_v1`
 
 ---
 
-### I2C SSD1306 OLED Driver
+## I2C SSD1306 OLED Driver
 
 Register-level I2C1 driver and SSD1306 OLED display implementation.
 
-Features include:
+### Features
 
 - I2C1 master transmission
 - I2C status flag handling
@@ -42,53 +42,52 @@ Features include:
 - Character and string rendering
 - Modular I2C and OLED drivers
 
-Project folder:
+**Project folder**
 
 `I2C_SSD1306_OLED`
 
 ---
 
-### TIM3 DHT22 UART Driver
+## STM32 Sensor Drivers
 
-Register-level DHT22 temperature and humidity sensor implementation using TIM3 and USART2.
+Register-level sensor drivers demonstrating reusable firmware architecture using shared peripheral drivers.
 
-Features include:
+### Features
 
-- TIM3 microsecond delay driver
-- DHT22 single-wire communication
+- Generic TIM3 microsecond timer driver
+- DHT22 temperature and humidity sensor driver
+- HC-SR04 ultrasonic distance sensor driver
 - GPIO input/output mode switching
-- DHT22 start signal generation
-- Sensor response detection
-- 40-bit data acquisition
-- Checksum validation
-- Temperature and humidity conversion
-- Push-button triggered measurements
+- DHT22 checksum validation
+- HC-SR04 timeout protection
+- Push-button triggered sensor measurements
 - UART data transmission
 - Modular driver structure
 
-Project folder:
+**Project folder**
 
-`TIM3_DHT22_UART`
-
----
-
-## Development Board
-
-STM32 NUCLEO-U083RC
+`STM32_Sensor_Drivers`
 
 ---
 
-## Development Approach
+# Development Board
+
+- STM32 NUCLEO-U083RC
+
+---
+
+# Development Approach
 
 - Bare-metal C
 - Direct register access
 - No STM32 HAL
 - Modular peripheral drivers
-- Hardware-level peripheral learning
+- Register-level peripheral programming
+- Reusable firmware architecture
 
 ---
 
-## Tools
+# Tools
 
 - STM32CubeIDE
 - ARM GCC Toolchain
@@ -98,16 +97,21 @@ STM32 NUCLEO-U083RC
 
 ---
 
-## Planned Projects
+# Planned Projects
 
 The following register-level projects are planned as part of this repository:
 
 - 7-Segment Display Driver
-- HC-SR04 Ultrasonic Sensor Driver
 - AT24Cxx EEPROM Driver
 - External Interrupt (EXTI) Driver
 - Timer Input Capture
-- PWM Motor Control
+- PWM Driver
 - SPI Driver
 - ADC Driver
 - RTC Driver
+
+---
+
+# Repository Goal
+
+This repository documents my journey of learning embedded systems by implementing peripherals and sensors from scratch using register-level programming. Each project focuses on understanding the underlying hardware, writing reusable drivers, and building firmware without relying on vendor abstraction libraries.
