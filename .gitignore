@@ -1,13 +1,24 @@
 # Build output
+
 Debug/
 Release/
+build/
+
+# CMake build directories
+
+cmake-build-*/
 
 # CubeIDE launch configurations
+
 *.launch
 
-# Temporary files
+# Compiled object and dependency files
+
 *.o
 *.d
+
+# Firmware build artifacts
+
 *.elf
 *.bin
 *.hex
@@ -15,13 +26,17 @@ Release/
 *.list
 *.su
 
-# Eclipse/CubeIDE metadata
+# Eclipse / CubeIDE metadata
+
 .metadata/
+.settings/
 
 # OS files
+
 Thumbs.db
 Desktop.ini
 .DS_Store
 
 # Backup files
+
 *~
