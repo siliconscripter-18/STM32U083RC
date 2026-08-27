@@ -2,9 +2,9 @@
 
 Bare-metal embedded systems projects developed using the **STM32 NUCLEO-U083RC** development board.
 
-This repository documents my hands-on learning and implementation of STM32 peripherals, communication interfaces, sensors, interrupts, and embedded applications using **direct peripheral register programming**.
+This repository documents my hands-on learning and implementation of STM32 peripherals, communication interfaces, sensors, interrupts, timing, EEPROM, display interfaces, and complete embedded applications using **direct peripheral register programming**.
 
-All projects avoid the STM32 HAL library and focus on understanding the underlying hardware, peripheral registers, interrupt mechanisms, timing, and firmware structure.
+All projects avoid the STM32 HAL library and focus on understanding the underlying hardware, peripheral registers, interrupt mechanisms, timing, driver structure, and application architecture.
 
 ---
 
@@ -33,9 +33,26 @@ All projects avoid the STM32 HAL library and focus on understanding the underlyi
     │       └── README.md
     │
     ├── Projects/
-    │   └── Visitor_Counter/
-    │       ├── Visitor_Counter/
+    │   ├── Visitor_Counter/
+    │   │   ├── Visitor_Counter/
+    │   │   ├── Images/
+    │   │   └── README.md
+    │   │
+    │   └── Visitor_Counter_V2/
     │       ├── Images/
+    │       ├── V2/
+    │       │   ├── Sources/
+    │       │   ├── Startup/
+    │       │   ├── Debug/
+    │       │   ├── .settings/
+    │       │   ├── .project
+    │       │   ├── .cproject
+    │       │   ├── CMakeLists.txt
+    │       │   ├── CMakePresets.json
+    │       │   ├── cubeide-gcc.make
+    │       │   ├── STM32U083RC_TX_FLASH.ld
+    │       │   └── Visitor_Counter_Debug.launch
+    │       │
     │       └── README.md
     │
     ├── .gitignore
@@ -56,7 +73,7 @@ Each individual driver or application contains its own README describing its imp
 
 A register-level external interrupt driver for the STM32U083.
 
-The current implementation uses **CMSIS device definitions** for peripheral register and bit-field access without using the STM32 HAL library.
+The implementation uses **CMSIS device definitions** for peripheral register and bit-field access without using the STM32 HAL library.
 
 ### Features
 
@@ -148,11 +165,11 @@ Register-level sensor drivers demonstrating reusable peripheral and sensor inter
 
 # Projects
 
-## Visitor Counter
+## Visitor Counter — V1
 
-A complete embedded application built around the STM32 NUCLEO-U083RC.
+A complete embedded visitor counting application built around the **STM32 NUCLEO-U083RC**.
 
-The current **Version 1.0** implementation combines GPIO, EXTI, SysTick, I2C, SSD1306 OLED, EEPROM, and sensor-related functionality to implement a visitor counting system.
+Version 1 combines GPIO, EXTI, SysTick, I2C, SSD1306 OLED, EEPROM, IR sensors, buzzer, and status indication to implement a working visitor counter.
 
 ### Features
 
@@ -175,33 +192,176 @@ The current **Version 1.0** implementation combines GPIO, EXTI, SysTick, I2C, SS
 
 ### Version 1.0
 
-Version 1.0 focuses on getting the complete visitor counter application working and documenting the hardware, drivers, and firmware implementation.
+Version 1 focuses on getting the complete visitor counter application working and establishing the foundation for the later FSM-based version.
 
-The current Version 1.0 code is intentionally kept as the working implementation.
+The V1 implementation is retained separately as the original working version.
 
 **Project folder**
 
 `Projects/Visitor_Counter/`
 
-### Version 2.0
+---
 
-Version 2.0 will refactor the Visitor Counter application around a **Finite State Machine (FSM)** architecture.
+# Visitor Counter — V2
 
-The goal is to improve application flow, state handling, scalability, and separation between hardware drivers and application logic while reusing the existing peripheral drivers.
+Version 2 extends the Visitor Counter into a more structured application using a **Finite State Machine (FSM)** for direction detection and sensor-sequence validation.
 
-Planned Version 2.0 direction:
+The system uses four IR sensors:
 
-    Hardware Inputs
-          ↓
-    Driver Layer
-          ↓
-    Application Logic
-          ↓
-    FSM
-          ↓
-    State Transitions
-          ↓
-    Display / Buzzer / EEPROM
+- **S1 and S2** — Entry detection
+- **S3 and S4** — Exit detection
+
+The order in which sensors are triggered determines whether the movement is a valid entry, valid exit, or wrong-direction event.
+
+### Features
+
+- Four IR sensors
+- EXTI falling-edge interrupts
+- Independent sensor debounce
+- Sensor re-arm mechanism
+- FSM-based direction detection
+- Valid entry detection
+- Valid exit detection
+- Wrong entry detection
+- Wrong exit detection
+- FSM sequence timeout
+- SSD1306 128×64 I2C OLED
+- AT24C04 EEPROM persistence
+- Entry warning LED
+- Exit warning LED
+- Active buzzer
+- Room occupancy tracking
+- 1 ms SysTick time base
+- Modular driver architecture
+- Register-level STM32 programming
+- Interrupt-driven sensor event capture
+
+### Sensor Mapping
+
+| Sensor | STM32 Pin | Function |
+|---|---|---|
+| S1 | PA0 | Entry sensor 1 |
+| S2 | PA1 | Entry sensor 2 |
+| S3 | PA6 | Exit sensor 1 |
+| S4 | PA7 | Exit sensor 2 |
+
+### Output Mapping
+
+| Function | STM32 Pin |
+|---|---|
+| Entry Warning LED | PB4 |
+| Exit Warning LED | PB5 |
+| Active Buzzer | PB6 |
+| I2C1 SCL | PB8 |
+| I2C1 SDA | PB9 |
+
+### Direction Detection
+
+    S1 → S2
+        ↓
+    Valid Entry
+
+    S2 → S1
+        ↓
+    Wrong Entry
+
+    S3 → S4
+        ↓
+    Valid Exit
+
+    S4 → S3
+        ↓
+    Wrong Exit
+
+### FSM States
+
+The application uses five states:
+
+    FSM_IDLE
+    FSM_ENTRY_S1
+    FSM_ENTRY_S2
+    FSM_EXIT_S3
+    FSM_EXIT_S4
+
+The general application flow is:
+
+    Sensor Event
+         ↓
+    EXTI Interrupt
+         ↓
+    Sensor Flag
+         ↓
+    FSM Processing
+         ↓
+    Direction Decision
+         ↓
+    Counter / Warning Action
+
+An incomplete sensor sequence returns to `FSM_IDLE` after the configured FSM timeout.
+
+### V2 Project Structure
+
+    Visitor_Counter_V2/
+    │
+    ├── Images/
+    │   ├── Block_Diagram.png
+    │   ├── Hardware_Setup.jpg
+    │   ├── OLED_Count.jpg
+    │   └── OLED_Splash.jpg
+    │
+    └── V2/
+        ├── Sources/
+        │   ├── display.c
+        │   ├── display.h
+        │   ├── EEPROM.c
+        │   ├── EEPROM.h
+        │   ├── EXTI.c
+        │   ├── EXTI.h
+        │   ├── font5x7.c
+        │   ├── font5x7.h
+        │   ├── FSM.c
+        │   ├── FSM.h
+        │   ├── gpio.c
+        │   ├── gpio.h
+        │   ├── i2c.c
+        │   ├── i2c.h
+        │   ├── main.c
+        │   ├── ssd1306.c
+        │   ├── ssd1306.h
+        │   ├── SysTick.c
+        │   └── SysTick.h
+        │
+        ├── Startup/
+        ├── Debug/
+        ├── .settings/
+        ├── .project
+        ├── .cproject
+        ├── CMakeLists.txt
+        ├── CMakePresets.json
+        ├── cubeide-gcc.make
+        ├── STM32U083RC_TX_FLASH.ld
+        └── Visitor_Counter_Debug.launch
+
+**Project folder**
+
+`Projects/Visitor_Counter_V2/`
+
+---
+
+# Visitor Counter V1 → V2
+
+| V1 | V2 |
+|---|---|
+| Basic visitor counting | FSM-based direction detection |
+| Sensor event handling | Sensor sequence validation |
+| Entry/exit counting | Valid and wrong-direction detection |
+| Basic sensor handling | Debounce + sensor re-arm |
+| OLED + EEPROM | OLED + EEPROM + warning system |
+| Basic application flow | Explicit application states |
+| Single application flow | FSM-driven movement logic |
+| Working foundation | More structured application architecture |
+
+V2 builds on the working V1 hardware and peripheral drivers rather than replacing the entire project.
 
 ---
 
@@ -226,9 +386,10 @@ The projects in this repository are developed with an emphasis on understanding 
 - Reusable peripheral drivers
 - Explicit peripheral configuration
 - Interrupt-driven event handling where required
-- Hardware-oriented firmware design
+- Hardware/application separation
+- State-machine based application logic where appropriate
 
-The repository also evolves from individual driver experiments toward complete embedded applications.
+The repository evolves from individual peripheral experiments toward complete embedded applications.
 
 ---
 
@@ -238,6 +399,7 @@ The repository currently includes implementations involving:
 
 - GPIO
 - EXTI
+- NVIC
 - SysTick
 - TIM3
 - UART / USART
@@ -247,6 +409,8 @@ The repository currently includes implementations involving:
 - HC-SR04
 - EEPROM
 - DC motor control
+- IR sensors
+- Finite State Machines
 
 Future projects will extend this into additional STM32 peripherals and interfaces.
 
@@ -260,13 +424,12 @@ Hardware used across the projects includes:
 - SSD1306 128×64 I2C OLED
 - DHT22 / AM2302
 - HC-SR04 ultrasonic sensor
-- IR obstacle sensor
+- IR obstacle sensors
 - AT24Cxx EEPROM
 - L298N motor driver
 - DC motor
 - LEDs
 - Buzzer
-- 7-segment displays
 - Push buttons
 - Breadboard
 - Jumper wires
@@ -318,7 +481,6 @@ Each project is intended to build on the concepts learned in the previous projec
 
 The following register-level projects are planned for future development:
 
-- 7-Segment Display Driver
 - Timer Input Capture
 - PWM Driver
 - SPI Driver
@@ -343,7 +505,9 @@ The primary goal is to understand:
 - Sensor interfacing
 - Driver design
 - Application architecture
-- State-machine based firmware design
+- Finite State Machines
+- Persistent data storage
+- Hardware/application separation
 
 The projects are developed without relying on vendor abstraction libraries so that the underlying STM32 hardware and firmware behavior remain explicit and understandable.
 
@@ -361,3 +525,14 @@ The long-term goal is to evolve the repository from individual register-level pe
 - Error handling
 - Persistent data storage
 - Scalable application architecture
+- More complex multi-peripheral applications
+
+---
+
+# Author
+
+**Balaji M**
+
+Target: **STM32U083RC**
+
+Repository: **STM32U083RC Register-Level Projects**
