@@ -4,22 +4,41 @@ A register-level embedded visitor counter built using the STM32U083RC, four IR s
 
 V2 introduces a Finite State Machine (FSM) to determine visitor movement direction from the order of sensor triggers.
 
+## System Block Diagram
+
 <p align="center">
   <img src="Images/Block_Diagram.png" alt="Visitor Counter V2 Block Diagram" width="800">
 </p>
+
+## Hardware Setup
 
 <p align="center">
   <img src="Images/Hardware_Setup.jpg" alt="Visitor Counter V2 Hardware Setup" width="800">
 </p>
 
+## OLED Count Display
+
 <p align="center">
   <img src="Images/OLED_Count.jpg" alt="Visitor Counter V2 OLED Count Display" width="800">
 </p>
+
+## OLED Splash Screen
 
 <p align="center">
   <img src="Images/OLED_Splash.jpg" alt="Visitor Counter V2 OLED Splash Screen" width="800">
 </p>
 
+## Entry Warning LED
+
+<p align="center">
+  <img src="Images/Entry_Warning_LED.jpg" alt="Entry Warning LED" width="800">
+</p>
+
+## Exit Warning LED
+
+<p align="center">
+  <img src="Images/Exit_Warning_LED.jpg" alt="Exit Warning LED" width="800">
+</p>
 ## Features
 
 - Four IR sensors for entry and exit detection
