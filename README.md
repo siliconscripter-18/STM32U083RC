@@ -39,7 +39,7 @@ Temperature, humidity, and occupancy monitoring system with PWM fan control, FSM
 IR sensor based visitor counting system with FSM direction detection, EEPROM persistence, and wrong-direction warning system.
 
 <p align="center">
-  <img src="Projects/Visitor_Counter/V2/Images/Hardware_Setup_front_view.jpg" width="700">
+  <img src="Projects/Visitor_Counter/V2/Images/Hardware_Setup.jpg" width="700">
 </p>
 
 | Version | What it adds |
