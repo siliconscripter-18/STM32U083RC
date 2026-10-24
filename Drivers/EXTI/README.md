@@ -1,196 +1,81 @@
-# EXTI_DRIVER
+# EXTI Driver — STM32U083RC
 
-## Overview
+Register-level external interrupt driver for the **STM32 NUCLEO-U083RC**, written in bare-metal C using CMSIS device headers, without STM32 HAL.
 
-This project demonstrates a **register-level External Interrupt (EXTI) driver** for the **STM32 NUCLEO-U083RC** development board.
-
-The project configures **PC13** as an external interrupt input and detects a **falling edge** using the STM32 EXTI peripheral.
-
-When the interrupt occurs, the `EXTI4_15_IRQHandler()` interrupt service routine clears the pending flag and toggles the LED connected to **PA5**.
-
-The project uses **CMSIS device headers** for STM32U083RC peripheral register and bit definitions without using the STM32 HAL library.
-
-> **This project demonstrates external GPIO interrupt configuration and interrupt handling using direct peripheral register programming.**
+Configures the on-board user button (**PC13**) as a falling-edge interrupt source. The interrupt handler clears the pending flag and toggles the on-board LED (**PA5**).
 
 ---
 
-# Hardware Used
+## What It Demonstrates
 
-- STM32 NUCLEO-U083RC
-- On-board User Button
-- On-board LED
-- USB Type-C Cable
-
----
-
-# Features
-
-- Bare-Metal C
-- CMSIS Device Definitions
-- Direct Peripheral Register Access
-- No STM32 HAL
-- GPIOA Clock Configuration
-- GPIOC Clock Configuration
-- PA5 GPIO Output Configuration
-- PC13 GPIO Input Configuration
-- Internal Pull-Up Configuration
-- EXTI13 GPIO Source Selection
-- Falling-Edge Trigger Configuration
-- EXTI Interrupt Unmasking
-- NVIC Interrupt Enable
-- EXTI Pending Flag Detection
-- EXTI Pending Flag Clearing
-- Interrupt Service Routine
-- LED Toggle on External Interrupt
+- GPIO to EXTI line mapping
+- Falling-edge trigger configuration
+- EXTI interrupt unmasking and NVIC enable
+- Interrupt service routine with pending-flag check and clear
+- Separate, reusable GPIO and EXTI modules
 
 ---
 
-# GPIO Configuration
+## Configuration
 
-| Pin | Configuration | Function |
-| --- | --- | --- |
-| PA5 | General-purpose output | On-board LED |
-| PC13 | Input with pull-up | User Button / EXTI13 |
-
----
-
-# EXTI Configuration
-
-| Configuration | Value |
-| --- | --- |
-| EXTI Line | EXTI13 |
-| GPIO Source | PC13 |
-| Trigger | Falling Edge |
-| Interrupt Vector | `EXTI4_15_IRQn` |
-| Interrupt Handler | `EXTI4_15_IRQHandler()` |
+| Item | Value |
+|---|---|
+| Input | PC13, user button, internal pull-up |
+| Output | PA5, on-board LED |
+| EXTI line | EXTI13, source GPIOC |
+| Trigger | Falling edge |
+| NVIC vector | `EXTI4_15_IRQn` |
+| Handler | `EXTI4_15_IRQHandler()` |
 
 ---
 
-# EXTI Driver Operation
+## How It Works
 
-The initialization sequence is:
+Initialization:
 
-    Enable GPIOC Clock
-            ↓
-    Configure PC13 as Input
-            ↓
-    Configure PC13 Pull-Up
-            ↓
-    Select GPIOC as EXTI13 Source
-            ↓
-    Enable Falling-Edge Trigger
-            ↓
-    Unmask EXTI13 Interrupt
-            ↓
-    Enable EXTI4_15 in NVIC
+```
+Enable GPIOC clock
+      ↓
+PC13 as input with pull-up
+      ↓
+Select GPIOC as EXTI13 source   (EXTI->EXTICR[3])
+      ↓
+Enable falling-edge trigger     (EXTI->FTSR1)
+      ↓
+Unmask EXTI13                   (EXTI->IMR1)
+      ↓
+Enable EXTI4_15 in NVIC
+```
 
-When the user button is pressed:
+At runtime:
 
-    PC13 Falling Edge
-            ↓
-    EXTI13 Triggered
-            ↓
-    EXTI4_15_IRQHandler()
-            ↓
-    Check EXTI13 Pending Flag
-            ↓
-    Clear Pending Flag
-            ↓
-    Toggle PA5 LED
+```
+Button press → PC13 falling edge → EXTI13 pending
+      ↓
+EXTI4_15_IRQHandler()
+      ↓
+Check pending flag → clear it (EXTI->FPR1) → toggle PA5
+```
+
+EXTI lines 4 to 15 share one interrupt vector on the STM32U083, so the handler checks which line is pending before acting.
 
 ---
 
-# Interrupt Handling
+## Project Structure
 
-The STM32U083 uses the `EXTI4_15_IRQn` interrupt vector for EXTI lines 4 through 15.
-
-The interrupt service routine checks the EXTI13 pending flag before handling the interrupt.
-
-The pending flag is cleared inside the ISR before the LED is toggled.
-
----
-
-# CMSIS Usage
-
-The project uses the STM32U083 CMSIS device header:
-
-    #include "stm32u083xx.h"
-
-Peripheral registers and bit definitions are accessed through the CMSIS device definitions.
-
-Examples include:
-
-    RCC->IOPENR
-    GPIOA->MODER
-    GPIOC->MODER
-    GPIOC->PUPDR
-    EXTI->EXTICR[3]
-    EXTI->FTSR1
-    EXTI->IMR1
-    EXTI->FPR1
-    GPIOA->ODR
-
-No manually defined peripheral addresses are used.
-
-No STM32 HAL library is used.
+```
+EXTI_DRIVER/
+└── Sources/
+    ├── main.c
+    ├── gpio.c / gpio.h
+    └── EXTI.c / EXTI.h
+```
 
 ---
 
-# Project Structure
+## Notes
 
-EXTI/
-│
-├── README.md
-│
-└── EXTI_DRIVER/
-    │
-    ├── Sources/
-    │   ├── main.c
-    │   ├── gpio.c
-    │   ├── gpio.h
-    │   ├── EXTI.c
-    │   └── EXTI.h
-    │
-    ├── Startup/
-    │   └── startup_stm32u083rctx.s
-    │
-    ├── CMakeLists.txt
-    ├── CMakePresets.json
-    ├── cubide-gcc.cmake
-    └── STM32U083RCTX_FLASH.ld
-    
-    Build-generated files such as `Debug/` and IDE configuration files are excluded from version control where applicable.
+- The pending flag is cleared inside the ISR before the LED is toggled.
+- This driver is the base for the EXTI handling used in the Visitor Counter and Industrial Environment Monitor projects.
 
----
-
-# Software Used
-
-- STM32CubeIDE
-- ARM GCC Toolchain
-- CMSIS
-- CMake
-- Git
-- GitHub
-
----
-
-# Development Approach
-
-- Bare-Metal C
-- Direct Peripheral Register Access
-- CMSIS Device Definitions
-- No STM32 HAL
-- Separate GPIO and EXTI source/header files
-- Interrupt-driven GPIO event handling
-
----
-
-# Notes
-
-- PC13 is configured as an input with an internal pull-up resistor.
-- EXTI13 is configured for falling-edge detection.
-- EXTI13 is handled by the `EXTI4_15_IRQn` interrupt vector.
-- The EXTI13 pending flag is cleared inside the ISR.
-- PA5 is toggled as a visible indication that the interrupt was received.
-- GPIO initialization and EXTI initialization are implemented as separate drivers.
-- This project serves as a reusable EXTI driver reference for future STM32U083RC projects.
+**Tools:** STM32CubeIDE · ARM GCC · Git

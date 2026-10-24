@@ -1,10 +1,9 @@
-# STM32U083RC — Bare-Metal Embedded Systems
+# STM32U083RC — Embedded Systems Projects & Drivers
 
-Bare-metal embedded firmware developed on the **STM32 NUCLEO-U083RC** using direct peripheral register programming — no STM32 HAL.
+Embedded firmware on the **STM32 NUCLEO-U083RC**: register-level drivers, complete multi-peripheral applications, and an RTOS project. The repository progresses from individual peripheral drivers to full applications.
 
-The repository progresses from individual peripheral drivers to complete multi-peripheral embedded applications.
-
-**Approach:** Bare-metal C · Direct register access · No HAL · Modular drivers
+**Bare-metal projects:** C · direct register programming · modular drivers · no HAL  
+**RTOS project:** FreeRTOS (CMSIS-RTOS2) with STM32 HAL  
 **Tools:** STM32CubeIDE · ARM GCC · CMSIS · Tera Term · Git
 
 ---
@@ -13,10 +12,10 @@ The repository progresses from individual peripheral drivers to complete multi-p
 
 ### Industrial Environment Monitor
 
-Temperature, humidity, and occupancy monitoring system with PWM fan control, FSM-based alert states, and persistent event logging.
+Temperature, humidity and occupancy monitoring with PWM fan control, FSM-based alert states and persistent event logging.
 
 <p align="center">
-  <img src="Projects/Industrial_Environment_Monitor/V2/Images/Hardware_Setup.jpg" width="700">
+  <img src="Projects/Industrial_Environment_Monitor/V2/Images/Hardware_Setup.jpg" width="700" alt="Industrial Environment Monitor hardware setup">
 </p>
 
 | Version | What it adds |
@@ -24,11 +23,9 @@ Temperature, humidity, and occupancy monitoring system with PWM fan control, FSM
 | V1 | DHT22 + IR occupancy + PWM fan + FSM + OLED |
 | V2 | DS1307 RTC + EEPROM alert logging + UART log interface |
 
-**Highlights:**
-- Temperature FSM — Standby / Warm Alert / Thermal Alert with PWM fan response
-- IR entry/exit counting drives room light control
-- V2 logs every alert-state transition with RTC timestamp to EEPROM
-- UART `LOG` and `CLEAR` commands for alert history retrieval
+- Temperature FSM: Standby / Warm Alert / Thermal Alert with PWM fan response
+- V2 logs every alert transition with an RTC timestamp to EEPROM
+- UART `LOG` and `CLEAR` commands for alert history
 
 📁 [`Projects/Industrial_Environment_Monitor`](Projects/Industrial_Environment_Monitor)
 
@@ -36,10 +33,10 @@ Temperature, humidity, and occupancy monitoring system with PWM fan control, FSM
 
 ### Visitor Counter
 
-IR sensor based visitor counting system with FSM direction detection, EEPROM persistence, and wrong-direction warning system.
+IR-based visitor counting with FSM direction detection, EEPROM persistence and wrong-direction warning.
 
 <p align="center">
-  <img src="Projects/Visitor_Counter/V2/Images/Hardware_Setup.jpg" width="700">
+  <img src="Projects/Visitor_Counter/V2/Images/Hardware_Setup.jpg" width="700" alt="Visitor Counter hardware setup">
 </p>
 
 | Version | What it adds |
@@ -47,29 +44,44 @@ IR sensor based visitor counting system with FSM direction detection, EEPROM per
 | V1 | 2 IR sensors + EXTI counting + OLED + EEPROM persistence |
 | V2 | 4 IR sensors + FSM direction detection + wrong-direction warning |
 
-**Highlights:**
-- V2 FSM validates sensor trigger sequence — S1→S2 valid entry, S2→S1 wrong direction
-- Per-sensor debounce and re-arm mechanism
-- 2000ms FSM timeout for incomplete sequences
+- V2 FSM validates sensor order: S1→S2 is a valid entry, S2→S1 is wrong direction
+- Per-sensor debounce, re-arm mechanism and a 2000 ms sequence timeout
 - Warning LED and buzzer on wrong-direction detection
 
 📁 [`Projects/Visitor_Counter`](Projects/Visitor_Counter)
 
 ---
 
+### Traffic Signal Controller (FreeRTOS)
+
+Two-way road signal with pedestrian crossing. One task runs the signal sequence, another runs a multiplexed two-digit countdown display, linked by a message queue.
+
+<p align="center">
+  <img src="Projects/Traffic_Signal_Controller_RTOS/Images/Hardware_Setup.jpg" width="700" alt="Traffic Signal Controller hardware setup">
+</p>
+
+- Two RTOS tasks with a producer-consumer message queue
+- Countdown display refresh runs independently of the 35 / 5 / 20 second signal phases
+- Vehicle and pedestrian signalling for both directions
+
+📁 [`Projects/Traffic_Signal_Controller_RTOS`](Projects/Traffic_Signal_Controller_RTOS)
+
+---
+
 ## Drivers
 
-Standalone register-level peripheral drivers developed as reusable modules before integration into projects.
+Standalone register-level drivers written as reusable modules before being used in the projects above.
 
 | Driver | What it covers |
 |---|---|
-| [`UART + GPIO + Motor`](Drivers/UART_GPIO_MOTOR_v1) | USART2 transmit/receive, UART command parser, GPIO, L298N motor control |
-| [`I2C + SSD1306 OLED`](Drivers/I2C_SSD1306_OLED) | I2C1 master driver, SSD1306 init and display, 5×7 ASCII font rendering |
-| [`Sensor Drivers`](Drivers/STM32_Sensor_Drivers) | DHT22 and HC-SR04 with TIM3 µs timing, checksum validation, timeout protection |
-| [`EXTI`](Drivers/EXTI) | EXTI configuration, GPIO-to-EXTI mapping, edge triggering, NVIC, ISR handling |
+| [`UART + GPIO + Motor`](Drivers/UART_GPIO_MOTOR) | USART2 command interface, GPIO control, L298N motor control |
+| [`I2C + SSD1306 OLED`](Drivers/I2C_SSD1306_OLED) | I2C1 master driver, SSD1306 display, 5×7 ASCII font |
+| [`Sensor Drivers`](Drivers/STM32_Sensor_Drivers) | DHT22 and HC-SR04 with TIM3 µs timing, checksum validation, timeouts |
+| [`EXTI`](Drivers/EXTI) | GPIO-to-EXTI mapping, edge trigger, NVIC, ISR handling |
+| [`Seven-Segment Multiplexing`](Drivers/SevenSeg_Multiplexing) | Two-digit display 00 to 99, BC547 digit select, SysTick 1 ms refresh |
 
 ---
 
 ## Peripherals Covered
 
-`GPIO` · `EXTI` · `NVIC` · `SysTick` · `TIM1` · `TIM2` · `TIM3` · `PWM` · `USART2` · `I²C1` · `DHT22` · `HC-SR04` · `SSD1306 OLED` · `AT24C04N EEPROM` · `DS1307 RTC` · `IR Sensors` · `L298N Motor Driver`
+`GPIO` · `EXTI` · `NVIC` · `SysTick` · `TIM1` · `TIM2` · `TIM3` · `PWM` · `USART2` · `I²C1` · `DHT22` · `HC-SR04` · `SSD1306 OLED` · `AT24C04N EEPROM` · `DS1307 RTC` · `IR Sensors` · `L298N Motor Driver` · `Seven-Segment Display` · `FreeRTOS`
