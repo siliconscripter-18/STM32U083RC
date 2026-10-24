@@ -79,7 +79,7 @@ The application uses two RTOS tasks to separate traffic signal control from coun
 - **Blocking receive**: `CountdownTask` sleeps on the queue with `osWaitForever`, so it uses no CPU between phases
 - **Independent display timing**: display multiplexing refreshes every 1 ms inside `CountdownTask`, separate from the 35 / 5 / 20 second signal timing
 - **Tick-based seconds**: each second is measured from the RTOS tick count, not a software loop
-- **Single shared display**: both directions run the same phase, so one multiplexed seven-segment display shows the countdown for both
+- **Single shared display**: both directions run the same phase, so one seven-segment display shows the countdown for both
 
 ---
 
