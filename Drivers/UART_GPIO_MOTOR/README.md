@@ -76,7 +76,7 @@ The motor runs from a 12 V adapter connected to the L298N. The STM32 and the L29
 ## Project Structure
 
 ```
-UART_GPIO_MOTOR_v1/
+UART_GPIO_MOTOR/
 ├── Images/
 └── UART_Driver_Modular/
     └── Sources/
