@@ -79,9 +79,11 @@ Standalone register-level drivers written as reusable modules before being used 
 | [`Sensor Drivers`](Drivers/STM32_Sensor_Drivers) | DHT22 and HC-SR04 with TIM3 µs timing, checksum validation, timeouts |
 | [`EXTI`](Drivers/EXTI) | GPIO-to-EXTI mapping, edge trigger, NVIC, ISR handling |
 | [`Seven-Segment Multiplexing`](Drivers/SevenSeg_Multiplexing) | Two-digit display 00 to 99, BC547 digit select, SysTick 1 ms refresh |
+| [`ADC`](Drivers/ADC) | 12-bit ADC driver, calibration, polling-based conversion and voltage monitoring through UART |
+| [`IWDG`](Drivers/IWDG) | Independent Watchdog driver, prescaler/reload configuration, watchdog refresh and reset-cause detection |
 
 ---
 
 ## Peripherals Covered
 
-`GPIO` · `EXTI` · `NVIC` · `SysTick` · `TIM1` · `TIM2` · `TIM3` · `PWM` · `USART2` · `I²C1` · `DHT22` · `HC-SR04` · `SSD1306 OLED` · `AT24C04N EEPROM` · `DS1307 RTC` · `IR Sensors` · `L298N Motor Driver` · `Seven-Segment Display` · `FreeRTOS`
+`GPIO` · `EXTI` · `NVIC` · `SysTick` · `TIM1` · `TIM2` · `TIM3` · `PWM` · `ADC` · `DMA` · `USART2` · `I²C1` · `DHT22` · `HC-SR04` · `SSD1306 OLED` · `AT24C04N EEPROM` · `DS1307 RTC` · `IR Sensors` · `L298N Motor Driver` · `Seven-Segment Display` · `IWDG` · `FreeRTOS`
